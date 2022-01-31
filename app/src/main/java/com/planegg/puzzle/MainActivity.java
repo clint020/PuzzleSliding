@@ -47,11 +47,12 @@ public class MainActivity extends AppCompatActivity {
     ArrayList <Asukoht> tykid = new ArrayList<>();
     Asukoht tykk_tyhi;
     private String sKood3;
-    private boolean bMangKaib;
-    private int iSekund,iSekund10nik, iSekund10nikMax=10;// 10 timeri intervalli = 1 sekund
+    private boolean bTimerKaib;
+    private int iSekund,iSekund10nik, iSekund10nikMax=10,iAegKokku;// 10 timeri intervalli = 1 sekund
     private int iSegamisLiikumisi=2;
     private int iVeergudeArv=3, iRidadeArv=3;
     private int iSegamisi, iSegamisiMax=2;
+    private boolean bMangKaib;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         bAlusta=findViewById(R.id.bAlusta);
         txtKell=findViewById(R.id.txtKell);
         txtInfo=findViewById(R.id.txtDebug);
-        bMangKaib=false;
+        txtInfo.setVisibility(View.GONE); // seda pole vaja enam
+        bTimerKaib=false;
         doTekitaPildid();
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,13 +140,13 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
-
     }
     private void doAlustaMangu() {
         //doSegaPildid();
-        bMangKaib=true;
+        bTimerKaib=true;
         iSekund=0;
+        iSekund10nik=iSekund10nikMax;
+        txtKell.setVisibility(View.INVISIBLE);
     }
     private void doTekitaPildid() {
         int iLoendur=0;
@@ -264,13 +266,8 @@ public class MainActivity extends AppCompatActivity {
                 im.setId(iLoendur+1);
                 tykid.add(new Asukoht(im.getId(),params.leftMargin,params.topMargin));
                 im.setOnTouchListener(new onTouchListener());
-                if ( iLoendur+1==6 )
-                {
-                    // im.setVisibility(View.GONE);
-                }
-                rl.addView(im);
 
-                System.out.println("N98 i:"+i+" j:"+j+" iLoendur:"+iLoendur);
+                rl.addView(im);
 
                 iLoendur++;
             }
@@ -332,17 +329,14 @@ public class MainActivity extends AppCompatActivity {
                       || 1==1) {
                         RelativeLayout.LayoutParams layoutParams =
                                 (RelativeLayout.LayoutParams) v.getLayoutParams();
-                        // Rect intersectiga teha, x puhul anda parameetrix x-xDelta,params.topmargin
-                      //  if (!isXCollision(v.getId(),x - xDelta,y - yDelta, layoutParams.width,layoutParams.height))
-                        // if (!isCollision(v.getId(),x - xDelta,y - yDelta, layoutParams.width,layoutParams.height))
+
                         if (!isCollision(v.getId(),x - xDelta,v.getTop(), layoutParams.width,layoutParams.height)
                         && x - xDelta + v.getWidth() <= rl.getWidth()
                         &&  x - xDelta >= 0)
                         {
                             layoutParams.leftMargin = x - xDelta;
                         }
-                        // Rect intersectiga teha, x puhul anda parameetrix params.leftmargin,y-yDelta
-                       // if (!isYCollision(v.getId(),x - xDelta,y - yDelta, layoutParams.width,layoutParams.height))
+
                         if (!isCollision(v.getId(),v.getLeft(),y - yDelta, layoutParams.width,layoutParams.height)
                             &&   y - yDelta >= 0 &&
                                 y - yDelta + v.getHeight() <= rl.getHeight())
@@ -397,19 +391,7 @@ public class MainActivity extends AppCompatActivity {
             doLopetaMang();
 
         }
-        /*if (!bRet)
-        {
-            for (int i=0;i<rl.getChildCount();i++)
-            {
-                View v=rl.getChildAt(i);
-                System.out.println("N99 v.id:"+v.getId()+" x:"+v.getLeft()+" y:"+v.getTop());
-            }
-            for (int i=0;i<tykid.size();i++)
-            {
-                System.out.println("N99 tykk id:"+tykid.get(i).getId()+" x:"+tykid.get(i).getX()
-                        +" y:"+tykid.get(i).getY());
-            }
-        }*/
+
         return bRet;
     }
 
@@ -440,67 +422,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private boolean isXCollision(int _id,int xMarg, int yMarg, int xWidth, int yHeight) {
-        boolean bRet=false;
-        int xViga=6,yViga=6;
-        int childCount = rl.getChildCount();
-
-        // käib kõik pildid läbi, et leida, kas selles kohas xMarginaal ei kattu
-        for (int i=0;i<childCount;i++)
-        {
-            View v = rl.getChildAt(i);
-            if (v.getId()!=_id && v.getVisibility()==View.VISIBLE)
-            {
-                // Y kattuvuse kontroll
-
-                if (v.getTop()<yMarg+ yHeight-yViga // otsitava ülemine serv minu alumisest väiksem
-                        && v.getTop()+v.getHeight()>yMarg-yViga ) // otsitava alumine serv minu ülemisest suurem
-                {
-                    // y on samas alas
-                    if ( v.getLeft()+v.getWidth()>xMarg+xViga      // otsitava parem serv minu vasakust suurem
-                            && v.getLeft() <xMarg+xWidth-xViga) // otsitava vasak serv minu paremast väiksem
-                    {
-                        // see asub minust paremal kõrval
-                        bRet=true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        return bRet;
-    }
-
-    private boolean isYCollision(int _id,int xMarg, int yMarg, int xWidth, int yHeight) {
-        boolean bRet=false;
-        int xViga=6,yViga=6;
-        int childCount = rl.getChildCount();
-
-        // käib kõik pildid läbi, et leida, kas selles kohas yMarginaal ei kattu
-        for (int i=0;i<childCount;i++)
-        {
-            View v = rl.getChildAt(i);
-            if (v.getId()!=_id && v.getVisibility()==View.VISIBLE)
-            {
-                // X kattuvuse kontroll
-                if ( v.getLeft()+v.getWidth()>xMarg+xViga      // otsitava parem serv minu vasakust suurem
-                        && v.getLeft() <xMarg+xWidth-xViga) // otsitava vasak serv minu paremast väiksem
-                {
-                    // y on samas alas
-                    if (v.getTop()<yMarg+ yHeight-yViga // otsitava ülemine serv minu alumisest väiksem
-                            && v.getTop()+v.getHeight()>yMarg-yViga ) // otsitava alumine serv minu ülemisest suurem
-                    {
-                        // see asub minust paremal kõrval
-                        bRet=true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        return bRet;
-    }
 
     @Override
     protected void onStart() {
@@ -537,35 +458,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doTaimeriTegevus() {
-        if (bMangKaib)
+        if (bTimerKaib)
         {
             iSekund10nik--;
             if (iSekund10nik<1)
             {
                 iSekund10nik=iSekund10nikMax;
                 iSekund++; // kell tiksub
+                if (bMangKaib) iAegKokku++;
             }
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    doInfo();
+
                     if (iSekund10nik==2)
                     {
                         doTyhiKohtInit(0);
                         iSegamisi=0;
+
                     }
 
-                    if (iSekund==3)
+                    if (iSekund==3 && iSekund10nik==1)
                     {
                         doEemaldaTyhiElement(true);
                     }
 
-                    if (iSekund==5) {
+                    if (iSekund==4 && iSekund10nik==1) {
                        // doPaneTyhiTykkTagasi();
                         doEemaldaTyhiElement(false);
                     }
-                    if (iSekund==8 )
+                    if (iSekund==6 )
                     {
                         if (iSegamisi < iSegamisiMax)
                         {
@@ -574,45 +497,35 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     }
-                    if (iSekund==8 && iSekund10nik==2)
-                    {
-                      //doSegaPildid(3);
-                        //  doEemaldaYksPilt(7);
-                    }
-                    if (iSekund==8 && iSekund10nik==3)
-                    {
-                       // doSegaPildid(2);
-                        //  doEemaldaYksPilt(7);
-                    }
-                    if (iSekund==12)
-                    {
-                      //  doSegaPildid(4);
-                        //  doEemaldaYksPilt(7);
-                    }
-
-                    if (iSekund==15)
+                    if (iSekund==8)
                     {
                         doEemaldaTyhiElement(true);
+                        iAegKokku=0;
+                        bMangKaib=true;
+                        txtKell.setVisibility(View.VISIBLE);
                     }
 
-                    if (iSekund==20) {
-                       //doEemaldaTyhiElement(false);
-                        //doPaneTyhiTykkTagasi();
-                    }
-                    if (iSekund>25)
+
+
+
+
+                    if (iSekund>8)
                     {
                         if (KontrolliKasPiltOige())
                         {
                             doLopetaMang();
-                            doPaneTyhiTykkTagasi();
+                            bMangKaib=false;
+                            System.out.println("N100 Mäng lõppes, sest pilt on õige");
+
                         }
                     }
 
 
                     // näitame sekundeid
-                    if (txtKell!=null)
+                    if (txtKell!=null )
                     {
-                        txtKell.setText("Aeg "+iSekund+","+(iSekund10nikMax-iSekund10nik));
+                        txtKell.setText("Aeg "+iAegKokku+","+(iSekund10nikMax-iSekund10nik));
+                        System.out.println("N100 Aeg:"+iAegKokku+" Sek:"+iSekund + " bMang:"+bMangKaib);
                     }
                 }
             });
@@ -771,7 +684,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void doLopetaMang() {
         doPaneTyhiTykkTagasi();
-        bMangKaib=false;
+        txtKell.setTextColor(Color.YELLOW);
+        txtKell.setText("Aeg:"+iAegKokku+"."+(iSekund10nikMax-iSekund10nik)+" Valmis, tubli!");
+        bTimerKaib=false;
+
     }
 
     private int getLeiaAlgAsukohtID(int id) {
