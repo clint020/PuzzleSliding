@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     Bitmap bMap;
     Timer timer;
     int ipilteHorisontaalis=3,ipilteVertikaalis=3;
-    int iSuurPiltLaius=400, iSuurPiltKorgus=300;
-    int ivaikePiltLaius=100,ivaikePiltKorgus=100;
+    int iSuurPiltLaius=750, iSuurPiltKorgus=750;
+    int ivaikePiltLaius=188,ivaikePiltKorgus=188;
     int iPiltideVahe=0; // pildikeste vahe üksteisest
     RelativeLayout rl;
     LinearLayout ll;
@@ -48,8 +48,10 @@ public class MainActivity extends AppCompatActivity {
     Asukoht tykk_tyhi;
     private String sKood3;
     private boolean bMangKaib;
-    private int iSekund;
+    private int iSekund,iSekund10nik, iSekund10nikMax=10;// 10 timeri intervalli = 1 sekund
     private int iSegamisLiikumisi=2;
+    private int iVeergudeArv=3, iRidadeArv=3;
+    private int iSegamisi, iSegamisiMax=2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +121,14 @@ public class MainActivity extends AppCompatActivity {
         {
             //test 1 tyhi 7 kaik 1,
             iTyhiViewID=getViewIDbygetID( tykk_tyhi.getId());
-            iKaik=iKaikUus;//r.nextInt(4)+1;
+            if (iKaikUus==0)
+            {
+                iKaik=r.nextInt(4)+1;
+            }else
+            {
+                iKaik=iKaikUus;//r.nextInt(4)+1;
+            }
+
             iNaaberTykk=getiLeiaNaaberTykk(iKaik,iTyhiViewID);
 
             if (iTyhiViewID >-1 && iNaaberTykk >-1 )
@@ -188,10 +197,12 @@ public class MainActivity extends AppCompatActivity {
     private void doGetPiltfromGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
-        rl.setBackground(getDrawable(pildid[5]));
+        rl.removeAllViews();
+      //  rl.setBackground(getDrawable(pildid[5]));
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        int iViewID;
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE){
             Bundle extras = data.getExtras();
@@ -204,14 +215,20 @@ public class MainActivity extends AppCompatActivity {
                 {
                     doTaidaPildid(imageBitmap);
                 }
-                imageBitmap=Bitmap.createScaledBitmap(imageBitmap,300,300,true);
+                imageBitmap=Bitmap.createScaledBitmap(imageBitmap,iSuurPiltLaius,iSuurPiltKorgus,true);
 
-
-                for (int i=0;i<rl.getChildCount();i++)
+                iViewID=0;
+                for (int iY=0;iY<iRidadeArv;iY++)
                 {
-                    bMap=Bitmap.createBitmap(imageBitmap,i*10,i*10,100,100);
-                    ImageView v=(ImageView)rl.getChildAt(i);
-                    v.setImageBitmap(bMap);
+                    for (int iX=0;iX<iVeergudeArv;iX++)
+                    {
+
+                        bMap=Bitmap.createBitmap(imageBitmap,iX*ivaikePiltLaius,iY*ivaikePiltKorgus,ivaikePiltLaius,ivaikePiltKorgus);
+                        ImageView v=(ImageView)rl.getChildAt(iViewID);
+                        v.setImageBitmap(bMap);
+                        iViewID++;
+                    }
+
                 }
                 System.out.println("N98 oleme pildi laadind");
             } catch (FileNotFoundException e) {
@@ -226,12 +243,12 @@ public class MainActivity extends AppCompatActivity {
         int iHMax=0;
         rl.removeAllViews();
 
-        for (int i=0;i<3;i++)
+        for (int i=0;i<iRidadeArv;i++)
         {
-            for (int j=0;j<3;j++)
+            for (int j=0;j<iVeergudeArv;j++)
             {
                 ImageView im=new ImageView(getApplicationContext());
-                Bitmap bm=Bitmap.createBitmap(imageBitmap,j*100,i*100,100,100);
+                Bitmap bm=Bitmap.createBitmap(imageBitmap,j*ivaikePiltLaius,i*ivaikePiltKorgus,ivaikePiltLaius,ivaikePiltKorgus);
 
 
                 im.setImageBitmap(bm);
@@ -359,12 +376,16 @@ public class MainActivity extends AppCompatActivity {
             {
                 if (v.getId()==tykid.get(j).getId())
                 {
-                    if (v.getLeft()!=tykid.get(i).getX() ||
-                            v.getTop()!=tykid.get(i).getY())
+                    if (v.getVisibility()==View.VISIBLE)
                     {
-                        bRet=false;
-                        break;
+                        if (v.getLeft()!=tykid.get(i).getX() ||
+                                v.getTop()!=tykid.get(i).getY())
+                        {
+                            bRet=false;
+                            break;
+                        }
                     }
+
                 }
             }
 
@@ -512,20 +533,27 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 doTaimeriTegevus();
             }
-        },1000,1000); // kord sekundis
+        },1000,100); // 10 korda sekundis
     }
 
     private void doTaimeriTegevus() {
         if (bMangKaib)
         {
-            iSekund++; // kell tiksub
+            iSekund10nik--;
+            if (iSekund10nik<1)
+            {
+                iSekund10nik=iSekund10nikMax;
+                iSekund++; // kell tiksub
+            }
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     doInfo();
-                    if (iSekund==2)
+                    if (iSekund10nik==2)
                     {
                         doTyhiKohtInit(0);
+                        iSegamisi=0;
                     }
 
                     if (iSekund==3)
@@ -537,26 +565,46 @@ public class MainActivity extends AppCompatActivity {
                        // doPaneTyhiTykkTagasi();
                         doEemaldaTyhiElement(false);
                     }
-                    if (iSekund==8)
+                    if (iSekund==8 )
                     {
-                        doSegaPildid(2);
+                        if (iSegamisi < iSegamisiMax)
+                        {
+                            doSegaPildid(0);
+                            iSegamisi++;
+                        }
+
+                    }
+                    if (iSekund==8 && iSekund10nik==2)
+                    {
+                      //doSegaPildid(3);
+                        //  doEemaldaYksPilt(7);
+                    }
+                    if (iSekund==8 && iSekund10nik==3)
+                    {
+                       // doSegaPildid(2);
+                        //  doEemaldaYksPilt(7);
+                    }
+                    if (iSekund==12)
+                    {
+                      //  doSegaPildid(4);
                         //  doEemaldaYksPilt(7);
                     }
 
-                    if (iSekund==12)
+                    if (iSekund==15)
                     {
                         doEemaldaTyhiElement(true);
                     }
 
-                    if (iSekund==15) {
-                        doEemaldaTyhiElement(false);
-                      //  doPaneTyhiTykkTagasi();
+                    if (iSekund==20) {
+                       //doEemaldaTyhiElement(false);
+                        //doPaneTyhiTykkTagasi();
                     }
                     if (iSekund>25)
                     {
                         if (KontrolliKasPiltOige())
                         {
                             doLopetaMang();
+                            doPaneTyhiTykkTagasi();
                         }
                     }
 
@@ -564,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
                     // näitame sekundeid
                     if (txtKell!=null)
                     {
-                        txtKell.setText(iSekund+" sekundit");
+                        txtKell.setText("Aeg "+iSekund+","+(iSekund10nikMax-iSekund10nik));
                     }
                 }
             });
