@@ -2,4 +2,5 @@
 <resources>
     <integer name="Veerge">3</integer>
     <integer name="Ridu">3</integer>
+    <integer name="SegamisiMax">15</integer>
 </resources>

@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView img;
     Bitmap bMap;
     Timer timer;
-    int ipilteHorisontaalis=3,ipilteVertikaalis=3;
+
     int iSuurPiltLaius=750, iSuurPiltKorgus=750;
     int ivaikePiltLaius=188,ivaikePiltKorgus=188;
     int iPiltideVahe=0; // pildikeste vahe üksteisest
@@ -49,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private String sKood3;
     private boolean bTimerKaib;
     private int iSekund,iSekund10nik, iSekund10nikMax=10,iAegKokku;// 10 timeri intervalli = 1 sekund
-    private int iSegamisLiikumisi=2;
+    private int iSekundPealeSegamist;
     private int iVeergudeArv=3, iRidadeArv=3;
-    private int iSegamisi, iSegamisiMax=2;
+    private int iSegamisi, iSegamisiMax=15;
     private boolean bMangKaib;
 
     @Override
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         bTimerKaib=false;
         iVeergudeArv=(int) getResources().getInteger(R.integer.Veerge);
         iRidadeArv=(int) getResources().getInteger(R.integer.Ridu);
+        iSegamisiMax=(int) getResources().getInteger(R.integer.SegamisiMax);
         doTekitaPildid();
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -496,24 +497,25 @@ public class MainActivity extends AppCompatActivity {
 
                     if (iSekund==1 && iSekund10nik==2)
                     {
-                      //  doTyhiKohtInit(0);
-                      //  iSegamisi=0;
+                        doTyhiKohtInit(0);
+                        iSegamisi=0;
 
                     }
 
 
 
-                    if (iSekund==1 )
+                    if (iSekund>0 && iSekund<5 )
                     {
                         if (iSegamisi < iSegamisiMax)
                         {
                             doTyhiKohtInit(0);
-                            iSegamisi=0;
+                            //iSegamisi=0;
                             doSegaPildid(0);
                             iSegamisi++;
                         }
 
                     }
+
                     if (iSekund==5)
                     {
                         doEemaldaTyhiElement(true);
