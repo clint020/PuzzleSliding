@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -68,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
         bTimerKaib=false;
         iVeergudeArv=(int) getResources().getInteger(R.integer.Veerge);
         iRidadeArv=(int) getResources().getInteger(R.integer.Ridu);
+        if (iVeergudeArv!=3 || iRidadeArv!=3)
+        {
+            Toast.makeText(MainActivity.this, "Bugi on sees, praegu töötab 3x3 ainult!",
+                    Toast.LENGTH_LONG).show();
+            iVeergudeArv=3; // HARDCODED 3x3
+            iRidadeArv=3;
+        }
         iSegamisiMax=(int) getResources().getInteger(R.integer.SegamisiMax);
         doTekitaPildid();
         b.setOnClickListener(new View.OnClickListener() {
@@ -216,12 +224,14 @@ public class MainActivity extends AppCompatActivity {
             try {
                 InputStream inputStream=getContentResolver().openInputStream(data.getData());
                 Bitmap imageBitmap = BitmapFactory.decodeStream(inputStream);
+
                 if (imageBitmap!=null)
                 {
                     doTaidaPildid(imageBitmap);
                 }
                 imageBitmap=Bitmap.createScaledBitmap(imageBitmap,iSuurPiltLaius,iSuurPiltKorgus,true);
-
+               // ivaikePiltLaius=imageBitmap.getWidth()/iVeergudeArv;
+               // ivaikePiltKorgus=imageBitmap.getHeight()/iRidadeArv;
                 iViewID=0;
                 for (int iY=0;iY<iRidadeArv;iY++)
                 {
@@ -273,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
             for (int j=0;j<iVeergudeArv;j++)
             {
                 ImageView im=new ImageView(getApplicationContext());
+
                 Bitmap bm=Bitmap.createBitmap(imageBitmap,j*ivaikePiltLaius,i*ivaikePiltKorgus,ivaikePiltLaius,ivaikePiltKorgus);
 
 
