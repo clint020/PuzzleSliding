@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         }else
         {
             // mingi viga, siia ei tohiks jõuda
-            System.out.println("N99 viga");
+
         }
 
     }
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
                 rl.addView(im);
 
-                System.out.println("N98 i:"+i+" j:"+j+" iLoendur:"+iLoendur);
+
 
                 iLoendur++;
             }
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         }
         rl.invalidate();
         doKorrigeeriRl();
-        System.out.println("N98 HMax:"+iHMax);
+
     }
 
 
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
-                System.out.println("N98 oleme pildi laadind");
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
 
                     xDelta = x - lParams.leftMargin;
                     yDelta = y - lParams.topMargin;
-                    System.out.println("N98 vajutati: id:"+v.getId());
+
                     break;
 
                 }
@@ -481,12 +481,12 @@ public class MainActivity extends AppCompatActivity {
 
                     if (iSekund==3 && iSekund10nik==1)
                     {
-                        doEemaldaTyhiElement(true);
+                     //   doEemaldaTyhiElement(true);
                     }
 
                     if (iSekund==4 && iSekund10nik==1) {
                        // doPaneTyhiTykkTagasi();
-                        doEemaldaTyhiElement(false);
+                      //  doEemaldaTyhiElement(false);
                     }
                     if (iSekund==6 )
                     {
@@ -515,7 +515,7 @@ public class MainActivity extends AppCompatActivity {
                         {
                             doLopetaMang();
                             bMangKaib=false;
-                            System.out.println("N100 Mäng lõppes, sest pilt on õige");
+
 
                         }
                     }
@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
                     if (txtKell!=null )
                     {
                         txtKell.setText("Aeg "+iAegKokku+","+(iSekund10nikMax-iSekund10nik));
-                        System.out.println("N100 Aeg:"+iAegKokku+" Sek:"+iSekund + " bMang:"+bMangKaib);
+
                     }
                 }
             });
