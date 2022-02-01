@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         txtInfo=findViewById(R.id.txtDebug);
         txtInfo.setVisibility(View.GONE); // seda pole vaja enam
         bTimerKaib=false;
+        iVeergudeArv=(int) getResources().getInteger(R.integer.Veerge);
+        iRidadeArv=(int) getResources().getInteger(R.integer.Ridu);
         doTekitaPildid();
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     bAlusta.setEnabled(true);
                     bAlusta.setText("Alusta");
+                    txtKell.setText("");
                 }
             });
         }
@@ -252,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     bAlusta.setEnabled(false);
+                    txtKell.setText("");
                 }
             });
 
@@ -539,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                     // näitame sekundeid
-                    if (txtKell!=null )
+                    if (txtKell!=null && bTimerKaib)
                     {
                         txtKell.setText("Aeg "+iAegKokku+","+(iSekund10nikMax-iSekund10nik));
 
@@ -700,10 +704,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void doLopetaMang() {
+        bTimerKaib=false;
         doPaneTyhiTykkTagasi();
         txtKell.setTextColor(Color.YELLOW);
-        txtKell.setText("Aeg:"+iAegKokku+"."+(iSekund10nikMax-iSekund10nik)+" Valmis, tubli!");
-        bTimerKaib=false;
+        txtKell.setText("Aeg:"+iAegKokku+" sekundit!");
+        txtKell.invalidate();
+
 
     }
 
