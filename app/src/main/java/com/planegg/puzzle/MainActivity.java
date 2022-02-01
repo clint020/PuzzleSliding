@@ -236,6 +236,24 @@ public class MainActivity extends AppCompatActivity {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+            // pilt olemas vist
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    bAlusta.setEnabled(true);
+                    bAlusta.setText("Alusta");
+                }
+            });
+        }
+        else
+        {
+            // pilti ei tulnud
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    bAlusta.setEnabled(false);
+                }
+            });
 
         }
     }
@@ -472,37 +490,34 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
 
-                    if (iSekund10nik==2)
+                    if (iSekund==1 && iSekund10nik==2)
                     {
-                        doTyhiKohtInit(0);
-                        iSegamisi=0;
+                      //  doTyhiKohtInit(0);
+                      //  iSegamisi=0;
 
                     }
 
-                    if (iSekund==3 && iSekund10nik==1)
-                    {
-                     //   doEemaldaTyhiElement(true);
-                    }
 
-                    if (iSekund==4 && iSekund10nik==1) {
-                       // doPaneTyhiTykkTagasi();
-                      //  doEemaldaTyhiElement(false);
-                    }
-                    if (iSekund==6 )
+
+                    if (iSekund==1 )
                     {
                         if (iSegamisi < iSegamisiMax)
                         {
+                            doTyhiKohtInit(0);
+                            iSegamisi=0;
                             doSegaPildid(0);
                             iSegamisi++;
                         }
 
                     }
-                    if (iSekund==8)
+                    if (iSekund==5)
                     {
                         doEemaldaTyhiElement(true);
                         iAegKokku=0;
                         bMangKaib=true;
                         txtKell.setVisibility(View.VISIBLE);
+                        bAlusta.setEnabled(false);
+                        bAlusta.setText("tegele lahendamisega !");
                     }
 
 
@@ -515,6 +530,8 @@ public class MainActivity extends AppCompatActivity {
                         {
                             doLopetaMang();
                             bMangKaib=false;
+                            bAlusta.setEnabled(true);
+                            bAlusta.setText("Alusta");
 
 
                         }
